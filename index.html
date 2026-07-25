@@ -106,6 +106,11 @@
                 </button>
             </div>
 
+            <!-- VeriPoints balance — hidden unless the shared wallet add-on is live & signed in -->
+            <button id="vpBalanceChip" onclick="VeriPoints.signIn()" class="hidden shrink-0 items-center gap-1.5 bg-glow-50 text-glow-700 border border-glow-200 rounded-full px-3 py-1.5 text-xs font-bold hover:bg-glow-100 transition" title="Your shared VeriPoints balance">
+                <i class="fas fa-coins text-glow-500"></i><span id="vpBalanceVal">0 pts</span>
+            </button>
+
             <button onclick="toggleCart(true)" class="relative shrink-0 text-slate-600 hover:text-glow-600 transition p-2">
                 <i class="fas fa-cart-shopping text-2xl"></i>
                 <span id="cartCount" class="absolute -top-1 -right-1 bg-zam-red text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
@@ -359,32 +364,62 @@
                     <p class="text-emerald-100 text-sm mt-1">Total to pay: <b id="payTotal" class="text-white">K0.00</b></p>
                 </div>
                 <div class="p-5 space-y-4">
-                    <div>
-                        <label class="text-sm font-semibold text-slate-600 block mb-2">Choose your network</label>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button onclick="selectProvider('mtn', this)" class="provider-btn border-2 rounded-xl p-3 text-center transition hover:border-glow-500">
-                                <div class="bg-yellow-400 text-black font-extrabold text-xs rounded-md py-1 mb-1">MTN</div>
-                                <span class="text-[11px] text-slate-500">MoMo</span>
+                    <!-- Payment method toggle — hidden unless the VeriPoints add-on is live -->
+                    <div id="vpPayToggle" class="hidden">
+                        <label class="text-sm font-semibold text-slate-600 block mb-2">Pay with</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" data-method="momo" onclick="setPayMethod('momo')" class="vp-method-btn vp-method-active border-2 rounded-xl p-3 text-center transition">
+                                <i class="fas fa-mobile-screen text-lg text-zam-green"></i>
+                                <span class="block text-xs font-bold mt-1">Mobile Money</span>
                             </button>
-                            <button onclick="selectProvider('airtel', this)" class="provider-btn border-2 rounded-xl p-3 text-center transition hover:border-glow-500">
-                                <div class="bg-red-600 text-white font-extrabold text-xs rounded-md py-1 mb-1">Airtel</div>
-                                <span class="text-[11px] text-slate-500">Money</span>
-                            </button>
-                            <button onclick="selectProvider('zamtel', this)" class="provider-btn border-2 rounded-xl p-3 text-center transition hover:border-glow-500">
-                                <div class="bg-green-700 text-white font-extrabold text-xs rounded-md py-1 mb-1">Zamtel</div>
-                                <span class="text-[11px] text-slate-500">Kwacha</span>
+                            <button type="button" data-method="veripoints" onclick="setPayMethod('veripoints')" class="vp-method-btn border-2 rounded-xl p-3 text-center transition">
+                                <i class="fas fa-coins text-lg text-glow-600"></i>
+                                <span class="block text-xs font-bold mt-1">VeriPoints</span>
                             </button>
                         </div>
                     </div>
-                    <div>
-                        <label class="text-sm font-semibold text-slate-600 block mb-2">Mobile money number</label>
-                        <div class="flex">
-                            <span class="bg-slate-100 border border-r-0 border-slate-300 rounded-l-xl px-3 flex items-center text-sm font-semibold text-slate-500">🇿🇲 +260</span>
-                            <input id="payPhone" type="tel" maxlength="9" placeholder="97 1234567"
-                                class="flex-1 border border-slate-300 rounded-r-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zam-green"
-                                oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+
+                    <!-- Mobile Money fields -->
+                    <div id="momoFields" class="space-y-4">
+                        <div>
+                            <label class="text-sm font-semibold text-slate-600 block mb-2">Choose your network</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="selectProvider('mtn', this)" class="provider-btn border-2 rounded-xl p-3 text-center transition hover:border-glow-500">
+                                    <div class="bg-yellow-400 text-black font-extrabold text-xs rounded-md py-1 mb-1">MTN</div>
+                                    <span class="text-[11px] text-slate-500">MoMo</span>
+                                </button>
+                                <button onclick="selectProvider('airtel', this)" class="provider-btn border-2 rounded-xl p-3 text-center transition hover:border-glow-500">
+                                    <div class="bg-red-600 text-white font-extrabold text-xs rounded-md py-1 mb-1">Airtel</div>
+                                    <span class="text-[11px] text-slate-500">Money</span>
+                                </button>
+                                <button onclick="selectProvider('zamtel', this)" class="provider-btn border-2 rounded-xl p-3 text-center transition hover:border-glow-500">
+                                    <div class="bg-green-700 text-white font-extrabold text-xs rounded-md py-1 mb-1">Zamtel</div>
+                                    <span class="text-[11px] text-slate-500">Kwacha</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-600 block mb-2">Mobile money number</label>
+                            <div class="flex">
+                                <span class="bg-slate-100 border border-r-0 border-slate-300 rounded-l-xl px-3 flex items-center text-sm font-semibold text-slate-500">🇿🇲 +260</span>
+                                <input id="payPhone" type="tel" maxlength="9" placeholder="97 1234567"
+                                    class="flex-1 border border-slate-300 rounded-r-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zam-green"
+                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                            </div>
                         </div>
                     </div>
+
+                    <!-- VeriPoints fields — hidden unless method = VeriPoints -->
+                    <div id="vpFields" class="hidden">
+                        <div class="bg-glow-50 border border-glow-100 rounded-xl p-4 flex items-center gap-3">
+                            <i class="fas fa-coins text-2xl text-glow-600"></i>
+                            <div>
+                                <p class="text-sm font-bold text-glow-700">Pay from your VeriPoints wallet</p>
+                                <p class="text-xs text-slate-500">Balance: <b id="vpPayBalance">0 pts</b> — shared across all ORIZIS stores.</p>
+                            </div>
+                        </div>
+                    </div>
+
                     <div>
                         <label class="text-sm font-semibold text-slate-600 block mb-2">Full name (for delivery)</label>
                         <input id="payName" type="text" placeholder="e.g. Chanda Mwansa" class="w-full border border-slate-300 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zam-green">
@@ -509,6 +544,8 @@
         .cat-chip-deal i { animation: flamePulse 1.6s ease-in-out infinite; }
         @keyframes flamePulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.15); opacity: .85; } }
         .provider-btn.selected { border-color: #d97706 !important; background: #fffbeb; }
+        .vp-method-btn { border-color: #e2e8f0; background: #fff; color: #475569; }
+        .vp-method-btn.vp-method-active { border-color: #d97706; background: #fffbeb; color: #b45309; }
         .faq-item { background: #fffbeb; border-radius: 16px; padding: 16px 20px; }
         .faq-item summary { font-weight: 700; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
         .faq-item summary::-webkit-details-marker { display: none; }
@@ -535,7 +572,20 @@
         SERVICE_FEE_PERCENT: 5,           // fee shown at checkout (covers MoMo charges)
         BUDGET_MAX_ZMW: 300,              // price ceiling for the "Deals under K300" section
         WHATSAPP_ORDERS: "260971234567",  // orders are also sent to this WhatsApp number
-        WHATSAPP_SUPPORT: "260971234567"  // customer support WhatsApp (support section button)
+        WHATSAPP_SUPPORT: "260971234567", // customer support WhatsApp (support section button)
+
+        /* --- VeriPoints (shared ORIZIS wallet + loyalty) — OPTIONAL add-on ---
+           Modular: while VERIPOINTS_ENABLED is false (or the shared service is
+           unreachable) the store behaves EXACTLY as a MoMo-only store — no
+           extra buttons, no errors. Flip to true + set VERIPOINTS_API once the
+           central VeriPoints service (identity + backend + SDK) is live, then
+           this store lights up as the pilot. Balance changes are ALWAYS
+           verified server-side; the client never self-credits. */
+        VERIPOINTS_ENABLED: false,        // master switch — false = MoMo-only, zero UI change
+        VERIPOINTS_API: "",               // central VeriPoints backend/SDK base URL (shared across all ORIZIS sites)
+        VERIPOINTS_PRODUCT: "zedsolar",   // this store's id in the shared wallet (for earn/redeem attribution)
+        EARN_PERCENT: 3,                  // points earned back on every successful order (any payment method)
+        REDEEM_RATE: 1                    // ZMW value of 1 VeriPoint when redeeming at checkout
     };
 
     /* ================================================================
@@ -972,10 +1022,124 @@
     }
 
     /* ================================================================
-       CHECKOUT — Mobile Money flow
+       VERIPOINTS — shared ORIZIS wallet + loyalty (optional add-on)
+       ----------------------------------------------------------------
+       Reuses the CENTRAL VeriPoints service (do NOT build a wallet here).
+       Order of preference:
+         1. window.VeriPoints  — the shared SDK, if injected on the page.
+         2. REST fallback       — minimal fetch client against VERIPOINTS_API,
+                                   matching the shared service contract:
+                                     GET  {API}/me            -> { user, balance }
+                                     POST {API}/auth/start    -> { url }  (hosted sign-in)
+                                     POST {API}/charge        -> { ok, balance }  (redeem/pay, server-verified)
+                                     POST {API}/earn          -> { ok, balance }  (loyalty accrual)
+       While disabled / unreachable, every method is a safe no-op and the
+       store stays MoMo-only with no UI change. Balances are ALWAYS trusted
+       from the server response, never computed on the client.
+       ================================================================ */
+    const VeriPoints = {
+        ready: false,        // shared service reachable AND a user is signed in
+        user: null,
+        balance: 0,
+        _sdk: null,
+
+        configured() { return !!(CONFIG.VERIPOINTS_ENABLED && CONFIG.VERIPOINTS_API); },
+        // enabled() gates ALL UI — false keeps the store byte-identical to MoMo-only
+        enabled() { return this.configured() && this.ready; },
+        _base() { return CONFIG.VERIPOINTS_API.replace(/\/$/, ''); },
+
+        // Called once on load. Any failure leaves the store MoMo-only.
+        async init() {
+            if (!this.configured()) return;
+            try {
+                if (window.VeriPoints && typeof window.VeriPoints.getAccount === 'function') {
+                    this._sdk = window.VeriPoints;                 // shared SDK path
+                    const acc = await this._sdk.getAccount({ product: CONFIG.VERIPOINTS_PRODUCT });
+                    if (acc && acc.user) { this.user = acc.user; this.balance = Number(acc.balance) || 0; this.ready = true; }
+                } else {
+                    const acc = await this._api('GET', '/me');     // REST fallback
+                    if (acc && acc.user) { this.user = acc.user; this.balance = Number(acc.balance) || 0; this.ready = true; }
+                }
+            } catch (e) { console.warn('VeriPoints unavailable — staying MoMo-only:', e); this.ready = false; }
+            renderVeriPointsUI();
+        },
+
+        async _api(method, path, body) {
+            const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json' }, signal: AbortSignal.timeout(15000) };
+            if (body) opts.body = JSON.stringify({ product: CONFIG.VERIPOINTS_PRODUCT, ...body });
+            const res = await fetch(this._base() + path, opts);
+            if (!res.ok) throw new Error('VeriPoints ' + path + ' -> ' + res.status);
+            return res.json();
+        },
+
+        // Opens the shared hosted sign-in (one identity across all ORIZIS sites).
+        async signIn() {
+            if (!this.configured()) return false;
+            try {
+                if (this._sdk && this._sdk.signIn) { await this._sdk.signIn(); }
+                else { const r = await this._api('POST', '/auth/start', { returnUrl: location.href }); if (r && r.url) { location.href = r.url; return true; } }
+                await this.init();
+                return this.ready;
+            } catch (e) { console.warn('VeriPoints sign-in failed:', e); return false; }
+        },
+
+        // Server-verified deduction (pay/redeem). Returns { ok, balance } or null.
+        async charge(amountZmw, ref) {
+            if (!this.enabled()) return null;
+            try {
+                const r = this._sdk && this._sdk.charge
+                    ? await this._sdk.charge({ product: CONFIG.VERIPOINTS_PRODUCT, amount: amountZmw, ref })
+                    : await this._api('POST', '/charge', { amount: amountZmw, ref });
+                if (r && r.ok) { this.balance = Number(r.balance) || 0; renderVeriPointsUI(); return r; }
+                return null;
+            } catch (e) { console.warn('VeriPoints charge failed:', e); return null; }
+        },
+
+        // Loyalty accrual on ANY successful order. Best-effort, never blocks the order.
+        async earn(amountZmw, ref) {
+            if (!this.enabled()) return;
+            try {
+                const r = this._sdk && this._sdk.earn
+                    ? await this._sdk.earn({ product: CONFIG.VERIPOINTS_PRODUCT, amount: amountZmw, ref })
+                    : await this._api('POST', '/earn', { amount: amountZmw, ref });
+                if (r && typeof r.balance !== 'undefined') { this.balance = Number(r.balance) || 0; renderVeriPointsUI(); }
+            } catch (e) { console.warn('VeriPoints earn failed (order still ok):', e); }
+        }
+    };
+
+    // Paints the optional VeriPoints bits (header balance chip + checkout method
+    // toggle). No-op that HIDES everything whenever the add-on is off.
+    function renderVeriPointsUI() {
+        const chip = $('vpBalanceChip');
+        const toggle = $('vpPayToggle');
+        const on = VeriPoints.enabled();
+        const balTxt = VeriPoints.balance.toLocaleString('en-ZM') + ' pts';
+        if (chip) {
+            chip.classList.toggle('hidden', !on);
+            chip.classList.toggle('flex', on);   // beat the default inline display so gap/items-center apply
+            if (on) $('vpBalanceVal').textContent = balTxt;
+        }
+        if (toggle) toggle.classList.toggle('hidden', !on);
+        const payBal = $('vpPayBalance');
+        if (payBal && on) payBal.textContent = balTxt;
+    }
+
+    /* ================================================================
+       CHECKOUT — Mobile Money flow (+ optional VeriPoints)
        (wired to pawaPay in the backend; falls back to simulation when
         the backend runs without a PAWAPAY_TOKEN)
        ================================================================ */
+    let payMethod = 'momo';   // 'momo' | 'veripoints' — always 'momo' when the add-on is off
+
+    // Switches the checkout between Mobile Money and VeriPoints. Only reachable
+    // when the add-on is enabled (the toggle is hidden otherwise).
+    function setPayMethod(m) {
+        payMethod = (m === 'veripoints' && VeriPoints.enabled()) ? 'veripoints' : 'momo';
+        document.querySelectorAll('.vp-method-btn').forEach(b => b.classList.toggle('vp-method-active', b.dataset.method === payMethod));
+        $('momoFields').classList.toggle('hidden', payMethod !== 'momo');
+        $('vpFields').classList.toggle('hidden', payMethod !== 'veripoints');
+    }
+
     function openCheckout() {
         if (!cart.length) return;
         toggleCart(false);
@@ -983,6 +1147,9 @@
         document.querySelectorAll('.provider-btn').forEach(b => b.classList.remove('selected'));
         $('payError').classList.add('hidden');
         $('payTotal').textContent = fmtK(cartTotals().total);
+        renderVeriPointsUI();       // show/hide the method toggle for this open
+        setPayMethod('momo');       // default to Mobile Money every time
+        if ($('vpPayBalance')) $('vpPayBalance').textContent = VeriPoints.balance.toLocaleString('en-ZM') + ' pts';
         $('payStep1').classList.remove('hidden');
         $('payStep2').classList.add('hidden');
         $('payStep3').classList.add('hidden');
@@ -1044,15 +1211,43 @@
         const name = $('payName').value.trim();
         const address = $('payAddress').value.trim();
         const err = $('payError');
+        const useVeriPoints = payMethod === 'veripoints' && VeriPoints.enabled();
 
-        if (!selectedProvider) { err.textContent = 'Please choose your mobile network.'; err.classList.remove('hidden'); return; }
-        if (!/^(9|7)\d{8}$/.test(phone)) { err.textContent = 'Enter a valid Zambian number, e.g. 971234567.'; err.classList.remove('hidden'); return; }
+        // Delivery details are needed for every payment method
         if (name.length < 3) { err.textContent = 'Please enter your full name.'; err.classList.remove('hidden'); return; }
         if (address.length < 5) { err.textContent = 'Please enter your delivery address.'; err.classList.remove('hidden'); return; }
+        // Mobile Money also needs a network + phone
+        if (!useVeriPoints) {
+            if (!selectedProvider) { err.textContent = 'Please choose your mobile network.'; err.classList.remove('hidden'); return; }
+            if (!/^(9|7)\d{8}$/.test(phone)) { err.textContent = 'Enter a valid Zambian number, e.g. 971234567.'; err.classList.remove('hidden'); return; }
+        }
         err.classList.add('hidden');
 
         const t = cartTotals();
-        const order = { provider: selectedProvider, phone, name, address, total: t.total };
+        const ref = 'ZS' + String(Math.floor(100000 + Math.random() * 900000));
+        const order = { provider: useVeriPoints ? 'veripoints' : selectedProvider, phone, name, address, total: t.total, method: useVeriPoints ? 'veripoints' : 'momo' };
+
+        // ---- VeriPoints wallet payment (server-verified deduction) ----
+        if (useVeriPoints) {
+            $('payStep1').classList.add('hidden');
+            $('payStep2').classList.remove('hidden');
+            const r = await VeriPoints.charge(t.total, ref);
+            if (!r || !r.ok) {
+                $('payStep2').classList.add('hidden');
+                $('payStep1').classList.remove('hidden');
+                err.textContent = 'VeriPoints payment could not be completed. Check your balance or use Mobile Money.';
+                err.classList.remove('hidden');
+                return;
+            }
+            $('orderRef').textContent = '#' + ref;
+            $('payStep2').classList.add('hidden');
+            $('payStep3').classList.remove('hidden');
+            VeriPoints.earn(t.total, ref);          // loyalty accrual on the purchase
+            sendOrderToWhatsApp(ref, order);
+            return;
+        }
+
+        // ---- Mobile Money payment (pawaPay, with simulation fallback) ----
         $('pay2Total').textContent = fmtK(t.total);
         $('pay2Phone').textContent = '+260 ' + phone;
         $('payStep1').classList.add('hidden');
@@ -1071,10 +1266,10 @@
         // Simulated mode keeps a short "check your phone" pause for realism
         if (outcome !== true) await new Promise(r => setTimeout(r, 4000));
 
-        const ref = 'ZG' + String(Math.floor(100000 + Math.random() * 900000));
         $('orderRef').textContent = '#' + ref;
         $('payStep2').classList.add('hidden');
         $('payStep3').classList.remove('hidden');
+        VeriPoints.earn(t.total, ref);              // loyalty accrual (no-op when the add-on is off)
         sendOrderToWhatsApp(ref, order);
     }
 
@@ -1094,10 +1289,13 @@
             const head = `• ${i.qty}x ${i.title} — ${fmtK(itemZmw(i) * i.qty)}`;
             return link ? [head, `   🔗 ${link}`] : [head];
         });
+        const payLine = o.method === 'veripoints'
+            ? `💳 Paid with VeriPoints wallet`
+            : `📞 +260${o.phone} (${(o.provider || '').toUpperCase()})`;
         const lines = [
             `☀️ *New ZedSolar Order ${'#' + ref}*`,
             `👤 ${o.name}`,
-            `📞 +260${o.phone} (${o.provider.toUpperCase()})`,
+            payLine,
             `📍 ${o.address}`,
             ``,
             `🛒 *Order — tap each link to buy on AliExpress:*`,
@@ -1192,6 +1390,7 @@
 
     renderCart();
     loadProducts('');
+    VeriPoints.init();   // optional shared-wallet add-on; no-op unless VERIPOINTS_ENABLED + API are set
     </script>
 </body>
 </html>
