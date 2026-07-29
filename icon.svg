@@ -1,24 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#3a2f70"/>
-      <stop offset=".6" stop-color="#241d4d"/>
-      <stop offset="1" stop-color="#151038"/>
-    </linearGradient>
-  </defs>
-
-  <rect width="512" height="512" fill="url(#bg)"/>
-
-  <!-- Rays: the sun arriving in the dark. -->
-  <g id="rays" fill="#eba60c">
-    <rect x="246" y="60" width="20" height="56" rx="10"/>
-    <rect x="246" y="396" width="20" height="56" rx="10"/>
-    <rect x="60" y="246" width="56" height="20" rx="10"/>
-    <rect x="396" y="246" width="56" height="20" rx="10"/>
-  </g>
-  <use href="#rays" transform="rotate(45 256 256)"/>
-
-  <!-- The sun, carrying the current. -->
-  <circle cx="256" cy="256" r="98" fill="#f7c034"/>
-  <path d="M274 196l-58 84h38l-12 56 58-84h-38z" fill="#241d4d"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+<defs>
+            <linearGradient id="zw-tag" x1="0.1" y1="0" x2="0.9" y2="1">
+              <stop offset="0" stop-color="#ffe27a"></stop><stop offset="0.32" stop-color="#ffb02e"></stop><stop offset="0.68" stop-color="#f57a11"></stop><stop offset="1" stop-color="#c9430a"></stop>
+            </linearGradient>
+            <linearGradient id="zw-cord" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ffd98a"></stop><stop offset="1" stop-color="#b4560c"></stop>
+            </linearGradient>
+            <mask id="zw-mask">
+              <rect x="0" y="0" width="1024" height="1024" fill="#fff"></rect>
+              <circle cx="286" cy="490" r="44" fill="#000"></circle>
+              <path d="M636 246 L436 512 H548 L470 786 L700 486 H586 Z" fill="#000"></path>
+            </mask>
+            <filter id="zw-sh" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="22" stdDeviation="26" flood-color="#7a2c00" flood-opacity="0.32"></feDropShadow>
+            </filter>
+          </defs>
+          <path d="M228 452 C176 340 216 236 322 194" fill="none" stroke="url(#zw-cord)" stroke-width="30" stroke-linecap="round"></path>
+          <g filter="url(#zw-sh)" mask="url(#zw-mask)">
+            <path d="M352 220 H814 A96 96 0 0 1 910 316 V664 A96 96 0 0 1 814 760 H352 L136 490 Z" fill="url(#zw-tag)"></path>
+            <path d="M352 220 H560 L360 760 H352 L136 490 Z" fill="#ffffff" opacity="0.16"></path>
+            <path d="M352 660 H910 V664 A96 96 0 0 1 814 760 H352 L262 648 Z" fill="#7a2c00" opacity="0.18"></path>
+          </g>
+          <g opacity="0.9">
+            <circle cx="806" cy="836" r="16" fill="#ffb02e"></circle>
+            <circle cx="878" cy="782" r="9" fill="#ffd98a"></circle>
+            <circle cx="742" cy="880" r="7" fill="#f57a11"></circle>
+          </g>
 </svg>
